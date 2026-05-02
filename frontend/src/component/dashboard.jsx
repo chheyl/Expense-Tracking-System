@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import AddTransaction from './addTransaction'
-import TransactionList from './transactionList'
-import Charts from './charts'
+import AddTransaction from './addtransaction.jsx'
+import TransactionList from './transactionlist.jsx'
+import Charts from './charts.jsx'
 
+const API = 'https://task-manager-866v.onrender.com/api'
 const API = 'https://your-expense-backend.onrender.com/api'
 
 export default function Dashboard({ token, onLogout }) {
