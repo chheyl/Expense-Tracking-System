@@ -17,7 +17,7 @@ export default function AddTransaction({ token, onAdd }) {
         { headers: { Authorization: `Bearer ${token}` } })
       setMsg('Transaction added!')
       setForm({ title: '', amount: '', type: 'expense', category: 'Food', date: new Date().toISOString().split('T')[0] })
-      setTimeout(() => { onAdd(); setMsg('') }, 1000)
+      setTimeout(() => { onAdd(); setMsg(''); }, 1500)
     } catch (err) {
       setMsg(err.response?.data?.error || 'Error adding transaction')
     }
