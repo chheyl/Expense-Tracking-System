@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-const API = 'http://localhost:5000/api'
+const API = 'https://your-expense-backend.onrender.com/api'
 const CATEGORIES = ['Food', 'Transport', 'Shopping', 'Bills', 'Health', 'Entertainment', 'Salary', 'Freelance', 'Other']
 
 export default function AddTransaction({ token, onAdd }) {

@@ -4,7 +4,7 @@ import AddTransaction from './AddTransaction'
 import TransactionList from './TransactionList'
 import Charts from './Charts'
 
-const API = 'http://localhost:5000/api'
+const API = 'https://your-expense-backend.onrender.com/api'
 
 export default function Dashboard({ token, onLogout }) {
   const [transactions, setTransactions] = useState([])
@@ -12,6 +12,8 @@ export default function Dashboard({ token, onLogout }) {
   const [categories, setCategories] = useState([])
   const [monthly, setMonthly] = useState([])
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [aiSummary, setAiSummary] = useState('')
+  const [aiLoading, setAiLoading] = useState(false)
 
   const headers = { Authorization: `Bearer ${token}` }
 
@@ -28,6 +30,18 @@ export default function Dashboard({ token, onLogout }) {
     setMonthly(m.data)
   }
 
+  const getAISummary = async () => {
+    setAiLoading(true)
+    setAiSummary('')
+    try {
+      const res = await axios.get(`${API}/ai-summary`, { headers })
+      setAiSummary(res.data.summary)
+    } catch (err) {
+      setAiSummary('Could not load AI summary. Please try again.')
+    }
+    setAiLoading(false)
+  }
+
   useEffect(() => { fetchAll() }, [])
 
   const cardStyle = (color) => ({
@@ -37,6 +51,7 @@ export default function Dashboard({ token, onLogout }) {
 
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1rem' }}>
+
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
@@ -51,7 +66,7 @@ export default function Dashboard({ token, onLogout }) {
       </div>
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
         <div style={cardStyle('#22c55e')}>
           <p style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '6px' }}>BALANCE</p>
           <p style={{ fontSize: '1.5rem', fontWeight: 700, color: summary.balance >= 0 ? '#22c55e' : '#f87171' }}>
@@ -70,6 +85,41 @@ export default function Dashboard({ token, onLogout }) {
             Rs. {summary.expense.toLocaleString()}
           </p>
         </div>
+      </div>
+
+      {/* AI Summary Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, #1e1b4b, #1e293b)',
+        borderRadius: '14px', padding: '1.5rem',
+        marginBottom: '1.5rem',
+        border: '1px solid #312e81'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div>
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#a5b4fc' }}>🤖 AI Financial Advisor</h3>
+            <p style={{ fontSize: '12px', color: '#475569', marginTop: '2px' }}>Powered by Gemini AI</p>
+          </div>
+          <button onClick={getAISummary} disabled={aiLoading} style={{
+            background: aiLoading ? '#334155' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+            border: 'none', borderRadius: '8px', color: 'white',
+            padding: '8px 16px', fontSize: '13px',
+            cursor: aiLoading ? 'not-allowed' : 'pointer',
+            fontWeight: 600, transition: 'all 0.2s'
+          }}>
+            {aiLoading ? '✨ Analyzing...' : '✨ Analyze My Spending'}
+          </button>
+        </div>
+        {aiSummary
+          ? <p style={{
+              color: '#e2e8f0', fontSize: '14px',
+              lineHeight: '1.8', whiteSpace: 'pre-line',
+              background: '#0f172a', borderRadius: '10px',
+              padding: '1rem'
+            }}>{aiSummary}</p>
+          : <p style={{ color: '#475569', fontSize: '13px' }}>
+              Add some transactions first, then click the button to get personalized AI insights 💡
+            </p>
+        }
       </div>
 
       {/* Tabs */}

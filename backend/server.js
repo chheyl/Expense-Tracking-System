@@ -155,3 +155,42 @@ app.get('/api/monthly', auth, async (req, res) => {
 // ── Start Server ─────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// AI Analytics Summary
+app.get('/api/ai-summary', auth, async (req, res) => {
+  try {
+    const transactions = await Transaction.find({ userId: req.user.id });
+    const summary = await Transaction.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(req.user.id) }},
+      { $group: { _id: { type: '$type', category: '$category' }, total: { $sum: '$amount' }}}
+    ]);
+
+    const prompt = `Analyze these transactions and give a short, friendly financial summary with 3 specific tips:
+
+Transactions: ${JSON.stringify(summary)}
+Total transactions: ${transactions.length}
+
+Format your response as:
+1. One sentence overall summary
+2. Top 3 actionable saving tips based on the actual data
+Keep it under 150 words. Use simple language.`;
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      }
+    );
+
+    const data = await response.json();
+    console.log('Gemini response:', JSON.stringify(data));
+    res.json({ summary: data.candidates[0].content.parts[0].text });
+  } catch (err) {
+    console.log('AI error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});

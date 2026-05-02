@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API = 'http://localhost:5000/api'
+const API = 'https://your-expense-backend.onrender.com/api'
 
 const CATEGORY_COLORS = {
   Food: '#f97316', Transport: '#3b82f6', Shopping: '#ec4899',
