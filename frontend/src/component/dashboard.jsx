@@ -4,7 +4,7 @@ import AddTransaction from './addtransaction.jsx'
 import TransactionList from './transactionlist.jsx'
 import Charts from './charts.jsx'
 
-const API = 'https://task-manager-866v.onrender.com/api'
+const API ='https://expense-tracker-backend-1j0m.onrender.com/'
 
 
 export default function Dashboard({ token, onLogout }) {
