@@ -69,7 +69,6 @@ app.post('/api/login', async (req, res) => {
 });
 
 // ── Transaction Routes ───────────────────────────────
-// Get all transactions
 app.get('/api/transactions', auth, async (req, res) => {
   try {
     const { type, category } = req.query;
@@ -83,7 +82,6 @@ app.get('/api/transactions', auth, async (req, res) => {
   }
 });
 
-// Add
 app.post('/api/transactions', auth, async (req, res) => {
   try {
     const { title, amount, type, category, date } = req.body;
@@ -98,7 +96,6 @@ app.post('/api/transactions', auth, async (req, res) => {
   }
 });
 
-// Delete
 app.delete('/api/transactions/:id', auth, async (req, res) => {
   try {
     await Transaction.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
@@ -108,8 +105,7 @@ app.delete('/api/transactions/:id', auth, async (req, res) => {
   }
 });
 
-
-// Get totals — income, expense, balance
+// ── Summary Routes ───────────────────────────────────
 app.get('/api/summary', auth, async (req, res) => {
   try {
     const transactions = await Transaction.find({ userId: req.user.id });
@@ -121,7 +117,6 @@ app.get('/api/summary', auth, async (req, res) => {
   }
 });
 
-// Get spending by category
 app.get('/api/categories', auth, async (req, res) => {
   try {
     const data = await Transaction.aggregate([
@@ -135,7 +130,6 @@ app.get('/api/categories', auth, async (req, res) => {
   }
 });
 
-// Get monthly spending
 app.get('/api/monthly', auth, async (req, res) => {
   try {
     const data = await Transaction.aggregate([
@@ -152,11 +146,7 @@ app.get('/api/monthly', auth, async (req, res) => {
   }
 });
 
-// ── Start Server ─────────────────────────────────────
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// AI Analytics Summary
+// ── AI Analytics Summary ─────────────────────────────
 app.get('/api/ai-summary', auth, async (req, res) => {
   try {
     const transactions = await Transaction.find({ userId: req.user.id });
@@ -194,3 +184,7 @@ Keep it under 150 words. Use simple language.`;
     res.status(500).json({ error: err.message });
   }
 });
+
+// ── Start Server ─────────────────────────────────────
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
