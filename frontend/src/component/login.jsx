@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
-
-const API = 'http://localhost:5000/api'
+const API = 'https://expense-tracker-backend-1j0m.onrender.com/api'
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('')
