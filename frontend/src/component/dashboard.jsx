@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import AddTransaction from './AddTransaction'
-import TransactionList from './TransactionList'
-import Charts from './Charts'
+import AddTransaction from './addTransaction'
+import TransactionList from './transactionList'
+import Charts from './charts'
 
 const API = 'https://your-expense-backend.onrender.com/api'
 
